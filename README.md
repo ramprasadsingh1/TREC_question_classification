@@ -1,1 +1,1 @@
-# TextMiningCW
+# TREC Question Classification
