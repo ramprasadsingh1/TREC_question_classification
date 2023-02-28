@@ -42,13 +42,14 @@ class ReadDataset(torch.utils.data.Dataset):
     def __len__(self):
         return len(self.sentences)
 
-# Create vocab
-from torchtext.vocab import build_vocab_from_iterator
-
-# Define a function that yields the tokenized sentences/labels in the dataset
-def sentence_iterator(dataset):
-    for sentence, _ in dataset:
-        yield sentence
+def text_pipeline(sentence):
+    indexed_sentence = []
+    for w in sentence:
+        if w in train_vocab:
+            indexed_sentence.append(train_vocab[w])
+        else:
+            indexed_sentence.append(train_vocab['<unk>'])
+    return indexed_sentence
 
 # Load Glove
 ## Create a dic of glove {word:vector}
@@ -389,12 +390,17 @@ if cfg['classification'] == 'coarse':
     coarse_train_dataset = ReadDataset(cfg['path_train'], target = "coarse")
     # Load test Coarse dataet
     coarse_test_dataset = ReadDataset(cfg['path_test'], target = "coarse")
-    # Build a vocabulary from the tokenized sentences
-    train_vocab = build_vocab_from_iterator(sentence_iterator(coarse_train_dataset), specials=['<unk>'])
-    train_vocab.set_default_index(train_vocab["<unk>"])
+
+    # Create vocab
+    train_vocab = {}
+    for sentence, _ in coarse_train_dataset:
+        for w in sentence:
+            if w not in train_vocab:
+                train_vocab[w] = len(train_vocab)
+
+    train_vocab['<unk>'] = len(train_vocab)
 
     # Define Collation Function for Coarse labels
-    coarse_pipeline = lambda x:train_vocab(x)
     def coarse_label_pipeline(label):
         if label == "ABBR":
             return 0
@@ -415,7 +421,7 @@ if cfg['classification'] == 'coarse':
         label_list, text_list, offsets = [], [], [0]
         for (_text, _label) in batch:
             label_list.append(coarse_label_pipeline(_label))
-            processed_text = torch.tensor(coarse_pipeline(_text), dtype=torch.int64)
+            processed_text = torch.tensor(text_pipeline(_text), dtype=torch.int64)
             text_list.append(processed_text)
             offsets.append(processed_text.size(0))
         label_list = torch.tensor(label_list, dtype=torch.int64)
@@ -434,7 +440,7 @@ if cfg['classification'] == 'coarse':
         label_list, text_list, offsets = [], [], [0]
         for (_text, _label) in sorted_batch:
             label_list.append(coarse_label_pipeline(_label))
-            processed_text = torch.tensor(coarse_pipeline(_text), dtype=torch.int64)
+            processed_text = torch.tensor(text_pipeline(_text), dtype=torch.int64)
             text_list.append(processed_text)
             offsets.append(processed_text.size(0))
         label_list = torch.tensor(label_list, dtype=torch.int64)
@@ -450,12 +456,12 @@ if cfg['classification'] == 'coarse':
         return sequences_padded, lengths, label_list
     
     # Create a weight matrix using glove_dict & vocab of train dataset
-
     matrix_len = len(train_vocab)
+
     glove_weights_matrix = np.zeros((matrix_len, glove_embed_size))
     words_found = 0
 
-    for i, word in enumerate(train_vocab.get_itos()):
+    for i, word in enumerate(train_vocab):
         try: 
             glove_weights_matrix[i] = glove_dict[word]
             words_found += 1
@@ -524,12 +530,17 @@ elif cfg['classification'] == 'fine':
     fine_train_dataset = ReadDataset(cfg['path_train'], target = "fine")
     # Load test Fine dataet
     fine_test_dataset = ReadDataset(cfg['path_test'], target = "fine")
-    # Build a vocabulary from the tokenized sentences
-    train_vocab = build_vocab_from_iterator(sentence_iterator(fine_train_dataset), specials=['<unk>'])
-    train_vocab.set_default_index(train_vocab["<unk>"])
+    # Create vocab
+    train_vocab = {}
+    for sentence, _ in fine_train_dataset:
+        for w in sentence:
+            if w not in train_vocab:
+                train_vocab[w] = len(train_vocab)
+
+    train_vocab['<unk>'] = len(train_vocab)
+
 
     # Define Collation Function for Fine labels
-    fine_pipeline = lambda x:train_vocab(x)
     def fine_label_pipeline(label):
         if label == "ABBR:abb":
             return 0
@@ -638,7 +649,7 @@ elif cfg['classification'] == 'fine':
         label_list, text_list, offsets = [], [], [0]
         for (_text, _label) in batch:
             label_list.append(fine_label_pipeline(_label))
-            processed_text = torch.tensor(fine_pipeline(_text), dtype=torch.int64)
+            processed_text = torch.tensor(text_pipeline(_text), dtype=torch.int64)
             text_list.append(processed_text)
             offsets.append(processed_text.size(0))
         label_list = torch.tensor(label_list, dtype=torch.int64)
@@ -657,7 +668,7 @@ elif cfg['classification'] == 'fine':
         label_list, text_list, offsets = [], [], [0]
         for (_text, _label) in sorted_batch:
             label_list.append(fine_label_pipeline(_label))
-            processed_text = torch.tensor(fine_pipeline(_text), dtype=torch.int64)
+            processed_text = torch.tensor(text_pipeline(_text), dtype=torch.int64)
             text_list.append(processed_text)
             offsets.append(processed_text.size(0))
         label_list = torch.tensor(label_list, dtype=torch.int64)
@@ -675,10 +686,11 @@ elif cfg['classification'] == 'fine':
     # Create a weight matrix using glove_dict & vocab of train dataset
 
     matrix_len = len(train_vocab)
+
     glove_weights_matrix = np.zeros((matrix_len, glove_embed_size))
     words_found = 0
 
-    for i, word in enumerate(train_vocab.get_itos()):
+    for i, word in enumerate(train_vocab):
         try: 
             glove_weights_matrix[i] = glove_dict[word]
             words_found += 1
