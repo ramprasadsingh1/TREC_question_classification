@@ -1,6 +1,0 @@
-path_train: data/train.label
-path_test: data/test.label
-classification: fine
-model: bow
-embedding: glove
-setting: finetune
