@@ -13,7 +13,7 @@ The **data** folder contains the following:
 
 The **src** folder contains the following:
 *  **labels** (predicted labels are saved in this folder after testing)
-*  **models** (models are saved in this folders after training)
+*  **models** (models are saved in this folder after training)
 *  **question_classifier.py** (source code)
 
 > ![image](https://user-images.githubusercontent.com/29594609/222276857-cccf2df5-80cd-4c5f-ba61-71c1a61d0072.png)
