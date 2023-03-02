@@ -28,7 +28,7 @@ To **train** a model use the following command:
 *Example:*  
 ![image](https://user-images.githubusercontent.com/29594609/222270542-52b4a1de-5d9f-4a12-ad5a-f5876a566177.png)
 
-To **test** a model by issuing the following command:  
+To **test** a model use the following command:  
 > & python3 question_classifier.py --test --config [configuration_file_path]
 
 *Example:*  
@@ -65,3 +65,10 @@ Coarse Classification/ Fine Classification:
 * BiLSTM + Random + Fine Tune  
 * BiLSTM + Glove + Freeze  
 * BiLSTM + Glove + Fine Tune  
+
+## Interpretting the predicted labels
+Once the **test** command is executed the predicted labesl are stored in **src\labels**. Due to issues with parsing the output labels, kindly interpret the predicted labels in the following manner:  
+### Coarse Labels:
+This classification contains 6 labels (0,1,2,3,4 and 5).
+The output file should look as follows:
+
