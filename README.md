@@ -9,10 +9,12 @@ The **data** folder contains the following:
 * **test.label** (test dataset)
 * **train.label** (train dataset)
 
+**Note:** Validation/Development is not included in the data folder as the source code automatically assumes 90/10 split and splits the train data set when the --train command is executed.
+
 > ![image](https://user-images.githubusercontent.com/29594609/222275748-2f1fdb41-28b7-40cb-94f9-f6a40a41e239.png)
 
 The **src** folder contains the following:
-*  **labels** (predicted labels are saved in this folder after testing)
+*  **labels** (predicted labels are saved in this folder after testing, corresponds to **output.txt** in the requirement) 
 *  **models** (models are saved in this folder after training)
 *  **question_classifier.py** (source code)
 
@@ -67,8 +69,14 @@ Coarse Classification/ Fine Classification:
 * BiLSTM + Glove + Fine Tune  
 
 ## Interpretting the predicted labels
-Once the **test** command is executed the predicted labesl are stored in **src\labels**. Due to issues with parsing the output labels, kindly interpret the predicted labels in the following manner:  
+Once the **test** command is executed the predicted labesl are stored in **src\labels**. Due to issues with parsing the output labels, they get printed as float values instead of integer values. Kindly interpret the predicted labels in the following manner:  
 ### Coarse Labels:
-This classification contains 6 labels (0,1,2,3,4 and 5).
-The output file should look as follows:
+This classification contains 6 labels (0, 1, 2, 3, 4 and 5)
+
+The output file should look as follows: (0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0)
+
+### Fine Labels:
+This classification contains 50 labels (0, 1, 2,..., 24, 25, 26,..., 48, 49, 50)
+
+The output file should look as follows: (0.0, 1.0,..., 2.4, 2.5, 2.6,..., 4.8, 4.9, 5.0)
 
