@@ -1,5 +1,6 @@
 # TREC Question Classification
 
+All the required packages to run this code are enclosed withing **requirements.txt** in the root folder.
 ## Running the code
 In order to run the code, download the folder, which contains all the required files while ensuring the folder structure and file locations are not changed.  
 
