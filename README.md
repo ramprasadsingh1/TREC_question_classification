@@ -1,13 +1,5 @@
 # TREC Question Classification
 
-Submission made by the group comprising of:
-
-Evgeni Gatsinski: 11155289  
-Mizuki Morishita: 11055328  
-Ram Prasad Singh: 11112664  
-Rahaf Al Abed: 10372000  
-Yousuf Khan: 10351351  
-
 All the required packages to run this code are enclosed withing **requirements.txt** in the root folder.
 ## Running the code
 In order to run the code, download the folder, which contains all the required files while ensuring the folder structure and file locations are not changed.  
